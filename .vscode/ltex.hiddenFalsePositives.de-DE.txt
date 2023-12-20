@@ -1,0 +1,31 @@
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qdate year nodate ngerman andothers = et al,nodate = o J, editor = Hg, editors = Hg,\\E$"}
+{"rule":"GERMAN_SPELLER_RULE","sentence":"^\\Qdate year nodate ngerman andothers = et al,nodate = o J, editor = Hg, editors = Hg,\\E$"}
+{"rule":"GERMAN_SPELLER_RULE","sentence":"^\\Qngerman  Abb.\\E$"}
+{"rule":"GERMAN_SPELLER_RULE","sentence":"^\\Qsame\\E$"}
+{"rule":"GERMAN_SPELLER_RULE","sentence":"^\\Qngerman  Abb.\\E$"}
+{"rule":"WHITESPACE_RULE","sentence":"^\\Qngerman  Abb.\\E$"}
+{"rule":"GERMAN_SPELLER_RULE","sentence":"^\\QProf. Dr. Volker Blees Maximilian Birk Master of Engineering Johann Grobe johann.grobe@student.hs-rm.de 1246658\\E$"}
+{"rule":"ANS_ARTIKEL","sentence":"^\\QZur Erlangung des Grades am der\\E$"}
+{"rule":"DOPPELTE_SATZZEICHEN","sentence":"^\\QHiermit bestätige ich, , dass ich die vorliegende Arbeit mit dem Titel\\E$"}
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qeigenständig angefertigt und keine anderen als die angegebenen Quellen und Hilfsmittel benutzt habe.\\E$"}
+{"rule":"DE_CASE","sentence":"^\\QADAC Allgemeiner Deutscher Automobil-Club e.V. deStatis Statistische Ämter des Bundes und der Länder FGSV Forschungsgesellschaft für Straßen- und Verkehrswesen FIS Forschungs-Informations-System KEP Kurier-Express-Paket Kfz Kraftfahrzeug HBO Hessische Bauordnung HGO Hessische Gemeindeverordnung HVZ Hauptverkehrszeit MIV Motorisierter Inidividualverkehr NRW Nordrhein-Westfalen NVZ Normalverkehrszeit ÖPNV Öffentlicher Personennahverkehr ÖV Öffentlicher Verkehr Pkw Personenkraftwagen POI Points of Interest Stpl.\\E$"}
+{"rule":"DE_CASE","sentence":"^\\QADAC Allgemeiner Deutscher Automobil-Club e.V. deStatis Statistische Ämter des Bundes und der Länder FGSV Forschungsgesellschaft für Straßen- und Verkehrswesen FIS Forschungs-Informations-System KEP Kurier-Express-Paket Kfz Kraftfahrzeug HBO Hessische Bauordnung HGO Hessische Gemeindeverordnung HVZ Hauptverkehrszeit MIV Motorisierter Individualverkehr NRW Nordrhein-Westfalen NVZ Normalverkehrszeit ÖPNV Öffentlicher Personennahverkehr ÖV Öffentlicher Verkehr Pkw Personenkraftwagen POI Points of Interest Stpl.\\E$"}
+{"rule":"DE_CASE","sentence":"^\\QStellplatz StVO Straßenverkehrs-Ordnung SPNV Schienenpersonennahverkehr UBA Umweltbundesamt VCD Verkehrsclub Deutschland e.V. VRN Verkehrsverbund Rhein-Neckar VwV-StVO Allgemeine Verwaltungsvorschrift zur Straßenverkehrs-Ordnung WE Wohneinheit\\E$"}
+{"rule":"DE_CASE","sentence":"^\\QDiese Raumtypologie unterscheidet zwischen sieben Typen: Metropole Regiopole und Großstadt Mittelstadt, städtischer Raum Kleinstädtischer, dörflicher Raum Zentrale Stadt Städtischer Raum Kleinstädtischer, dörflicher Raum\\E$"}
+{"rule":"DE_CASE","sentence":"^\\QPython Scrapy Unterschiedlicher Aufbau von Websites Unterschiedliche Antwortzeit von Servern Unterschiedliche Qualität der Datenbereitstellung headless Browser Scrapy-Playwright\\E$"}
+{"rule":"DE_CASE","sentence":"^\\QPython Scrapy Unterschiedlicher Aufbau von Websites Unterschiedliche Antwortzeit von Servern Unterschiedliche Qualität der Datenbereitstellung Headless Browser Scrapy-Playwright\\E$"}
+{"rule":"DE_CASE","sentence":"^\\QPython Scrapy Unterschiedlicher Aufbau von Websites Unterschiedliche Antwortzeit von Servern Unterschiedliche Qualität der Datenbereitstellung Headless-Browser Scrapy-Playwright\\E$"}
+{"rule":"DE_CASE","sentence":"^\\QSammlung von Hypothesen Clustern der Hypothesen Für deduktives Vorgehen → Prüfung dieser Hypothesen\\E$"}
+{"rule":"DE_CASE","sentence":"^\\QIdeen für die Einleitung Grundlegendes zur Notwendigkeit der Verkehrswende Grundlegendes zur Verkehrspolitik Föderales System für Deutschland und die Bedeutung für die Verkehrswende kommunale Verkehrspolitik und die Bedeutung für die Verkehrswende\\E$"}
+{"rule":"ANS_ARTIKEL","sentence":"^\\QEine Thesis zur Erlangung des Grades am der\\E$"}
+{"rule":"DE_CASE","sentence":"^\\QAnwendung und Erporbung von Text-Mining-Methodiken zur Analyse von kommunaler Verkehrspolitik Am Beispiel von kleinen Mittelstädten innerhalb des Verkehrsverbunds Rhein-Neckar Prof. Dr. Volker Blees Maximilian Birk Master of Engineering Johann Grobe johann.grobe@student.hs-rm.de 1246658\\E$"}
+{"rule":"DE_CASE","sentence":"^\\QAnwendung und Erprobung von Text-Mining-Methodiken zur Analyse von kommunaler Verkehrspolitik Am Beispiel von kleinen Mittelstädten innerhalb des Verkehrsverbunds Rhein-Neckar Prof. Dr. Volker Blees Maximilian Birk Master of Engineering Johann Grobe johann.grobe@student.hs-rm.de 1246658\\E$"}
+{"rule":"GERMAN_SPELLER_RULE","sentence":"^\\QDie Themen Verkehr und Mobilität erhitzen in der Politik und Gesellschaft stets die Gemüter und gilt als komplexes und diffiziles Politikfeld [17]hesse2018[239]zimmermann2023.\\E$"}
+{"rule":"GERMAN_SPELLER_RULE","sentence":"^\\QKommunen haben dabei eine Schlüsselrolle bei der Realisierung der sog. Verkehrs- bzw. Mobilitätswende, denn in vielen Fällen liegt die Ausarbeitung als auch die Umsetzung von Plänen und Konzepten auf der kommunalen Ebene [29]birk2020[246]zimmermann2023 uba2022 deutscherstaedtetag2018 bbsr2018.\\E$"}
+{"rule":"GERMAN_SPELLER_RULE","sentence":"^\\QEs gibt durchaus Einschränkungen im Handlungsspielraum durch gesetzliches Rahmenbedingungen wie dem Straßenverkehrsgesetz und der Straßenverkehrsordnung uba2021a agoraverkehrswende2022.\\E$"}
+{"rule":"GERMAN_SPELLER_RULE","sentence":"^\\QDazu zählt bspw. die Bauleitplanung, der Bau, die Gestaltung und der Betrieb von Straßen und Radwegen, als auch das Parkraummanagement [31]birk2020 holz-rau2016[246]zimmermann2023[57ff.]kindhauser2002.\\E$"}
+{"rule":"GERMAN_SPELLER_RULE","sentence":"^\\QZudem gibt es Hinweise darauf, dass der verkehrspolitische Handlungsspielraum von Kommunen noch nicht vollends ausgeschöpft wurde [13]schwedes2013 bratzel1999 rogge1999.\\E$"}
+{"rule":"DE_CASE","sentence":"^\\Q[]Föderale Hierarchie in Deutschland \\E(?:Dummy|Ina|Jimmy-)[0-9]+$"}
+{"rule":"GERMAN_SPELLER_RULE","sentence":"^\\QDie Koalitionsverträge wurden mittels einer QDA-Software hinsichtlich mobilitäts- und verkehrsbezogener Inhalte analysiert.\\E$"}
+{"rule":"DE_COMPOUNDS","sentence":"^\\QIm Zusammenhang mit dem Begriff Text Mining stößt man auch auf den Begriff Data Mining.\\E$"}
+{"rule":"DE_COMPOUNDS","sentence":"^\\QDie Begrifflichkeiten sind eng mit dem Data Mining verbunden.\\E$"}

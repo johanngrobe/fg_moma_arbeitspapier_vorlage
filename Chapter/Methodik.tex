@@ -1,0 +1,296 @@
+% !TeX root = Masterthesis_Johann_Grobe.tex
+\chapter{Methodik}\label{ch_methodik}
+
+Das folgende Kapitel beschreibt und erläutert die Vorgehensweise dieser Arbeit. Vor allem beim \textit{Text Mining} wurde explorativ vorgegangen. Die Leitfragen aus \autoref{ch_zielsetzung} bilden das Grundgerüst. Der in dieser Arbeit genutzte Quellcode ist auf Github einsehbar (s. \autoref{appendix_Github}).
+
+% ---------------------------------------------------------------------
+% ---------------------------------------------------------------------
+
+\section{Bestimmung des Untersuchungsgebietes}
+
+Oftmals lag der Fokus von verkehrlichen Forschungsprojekten auf Großstädten oder dem ländlichen Raum, sodass Klein- und Mittelstädte sich nicht in diesem Rahmen wiederfinden \parencite[261]{birk2022}. Weiterhin träfe in Klein- und Mittelstädten in Ballungsräumen Siedlungs-, Verkehrs- und damit Handlungsdruck einer Großstadt auf die Planungskompetenzen und Verwaltungsstrukturen einer Kleinstadt \parencite[vgl.][261]{birk2022}.
+
+Aus diesen Gründen wurden Mittelstädte zwischen ca. 20.000 und 50.000~EW als Untersuchungsobjekt betrachtet. Im Fokus stand die Ebene der parlamentarischen Organe, wie der Gemeinde- oder Stadtrat, die Stadtverordnetenversammlung oder der Kreistag. In diesen Gremien wird über alle wesentlichen Themen der Kommunalpolitik und entsprechend der kommunalen Verkehrspolitik beraten und beschlossen (s. \autoref{ch_kommunalpolitik}). Fachausschüsse sowie andere politische Gremien wurden nicht weiter betrachtet. Das Tarifgebiet des VRN \parencite{vrn} wurde ausgewählt, um die Ergebnisse des Projektes \textit{Suburban New Mobility}, welches Klein- und Mittelstädte aus der Metropolregion Rhein-Main betrachtete (\cite[261]{birk2022}; s. \autoref{ch_untersuchungen_verkehrspolitik}), um einen weiteren Betrachtungsraum zu ergänzen.
+
+Um Mittelstädte im Untersuchungsgebiet zu identifizieren, wurde die Raumtypologie des \textit{Bundesministeriums für Digitales und Verkehr (BMDV)} \textit{RegioStaR 7} genutzt \parencite{bmdv2021}. Diese Raumtypologie unterscheidet zwischen sieben Typen:
+
+\begin{multicols}{2}
+    \begin{enumerate}[label=\arabic*]
+        \setcounter{enumi}{70}
+        \item Metropole
+        \item Regiopole und Großstadt
+        \item Mittelstadt, städtischer Raum
+        \item kleinstädtischer, dörflicher Raum
+        \item zentrale Stadt 
+        \item städtischer Raum
+        \item kleinstädtischer, dörflicher Raum
+    \end{enumerate}
+\end{multicols}
+
+Mittelstädte sind in den Kategorien \textit{Mittelstadt, städtischer Raum} und \textit{zentrale Stadt} eingegliedert und wurden nach ihrer Einwohnergröße selektiert. Die Einwohnerzahl sollte zwischen ca. 20.000 und 50.000~EW betragen. Gemäß der Auswahlkriterien ergaben sich 20~Mittelstädte und sieben Landkreise in vier Bundesländern. Von diesen Kommunen sind vier als kreisfreie und 15 als kreisangehörige Städte sowie eine als kreisangehörige Gemeinde einzuordnen (s. \autoref{tab:kommunen_übersicht} und \autoref{fig:untersuchungsgebiet}). 
+
+\begingroup
+    \vfill
+    \input{Tables/Kommunen_übersicht.tex}
+    \vfill
+\endgroup
+  
+\begin{figure}[h!]
+     \centering
+     \includegraphics[width=\textwidth]{Figures/Untersuchungsgebiet.pdf}
+     \caption[Karte des Untersuchungsgebietes]{Karte des Untersuchungsgebietes (eigene Darstellung)}
+     \label{fig:untersuchungsgebiet}
+\end{figure}
+
+% ---------------------------------------------------------------------
+% ---------------------------------------------------------------------
+\newpage
+
+\section{Datenakquise}
+
+Im nächsten Schritt wurde das \textit{Web Scraping} auf die RIS der Kommunen angewandt und die Daten aufbereitet. Die Vorgehensweise der Datenakquise wird in den folgenden Abschnitten erläutert.
+
+\subsection{Web Scraping}
+
+Die Datengrundlage dieser Arbeit bildeten die RIS der Kommunen und Landkreise. Zunächst wurde der strukturelle Aufbau und der HTML-Quellcode aller RIS gesichtet und analysiert. Dabei lag der Fokus darauf, alle verfügbaren Daten und Attribute zu identifizieren, die qualitative Daten zur kommunalpolitischen Arbeit beinhalten oder Metadaten dieser sind. Die Metadaten umfassten folgende Dimensionen:
+
+\begin{itemize}
+    \item URL des Dokumentes
+    \item relativer Pfad zum heruntergeladenen Dokument auf dem lokalen Datenträger
+    \item Name der Kommune oder des Kreises
+    \item föderale Ebene (kreisfreie Stadt, Stadt, Gemeinde oder Kreis)
+    \item Name des getagten Gremiums
+    \item Sitzungsdatum
+    \item Nummer des TOP
+    \item Name des TOP
+    \item Name des erlangten Dokumentes
+    \item Beschlussstatus bzw. Beratungsergebnis
+    \item Typ des Dokumentes
+\end{itemize}
+
+Nicht alle RIS stellten alle der aufgelisteten Metadaten bereit. Teilweise war es notwendig, Metadaten aus den Dokumentennamen zu extrahieren. Mehr dazu folgt im \autoref{sec:datenaufbereitung}.
+
+\textit{Python} ist eine universelle Programmiersprache mit einer großen Anzahl an Bibliotheken und Erweiterungen. \textit{Python 3.10} bildet die Grundlage des \textit{Web Scrapings} und der Datenverarbeitung im weiteren Verlauf der Arbeit. Für die Datenakquise wurden folgende \textit{Python}-Bibliotheken verwendet:
+\begin{itemize}
+    \item \href{https://scrapy.org/}{Scrapy 2.8.0},
+    \item \href{https://playwright.dev/python/}{Playwright 1.31} und
+    \item \href{https://github.com/scrapy-plugins/scrapy-playwright}{Scrapy-Playwright 0.0.28}.
+\end{itemize}
+
+\textit{Scrapy} ist ein \textit{Web-Crawling-} und \textit{-Scraping-Framework} und ermöglicht, die RIS zu durchsuchen, Daten herunterzuladen und in einer Datenbank zu speichern. Die Kommunen im Untersuchungsgebiet nutzten proprietäre RIS-Softwarelösungen von unterschiedlichen Anbietern, sodass das \textit{Scraping-Skript} an die jeweiligen Gegebenheiten der RIS angepasst wurde. Wenn die RIS auf dem System des gleichen Anbieters basierten, handelte es sich oftmals um unterschiedliche Versionen, sodass Unterschiede im HTML-Quellcode vorlagen. Exemplarisch hierfür waren die RIS der Städte Speyer, Landau oder Frankenthal. Neben den Unterschieden im HTML-Quellcode bestanden und bestehen weiterhin allgemeine verwaltungsstrukturelle Unterschiede zwischen den Kommunen. Diese ist stark vom Bundesland der jeweiligen Kommune abhängig. Aber auch das Vorhandensein des Stadtrechts, die Kreisangehörigkeit bzw. -unabhängigkeit sind Faktoren, welche die Verwaltungsstrukturen einer Kommune maßgeblich beeinflussen (s. \autoref{ch_kommunalpolitik}). 
+
+Bei dynamisch aufbauenden Webseiten genügte die alleinige Anwendung von \textit{Scrapy} nicht, da die benötigten Daten mit \textit{Javascript} dynamisch geladen wurden. Beispiele hierfür waren die RIS von Bad Friedrichshall, Schifferstadt oder dem Rhein-Pfalz-Kreis. In diesen Fällen wurde der \textit{Headless Browser} \textit{Playwright} verwendet. Die \textit{Python}-Bibliothek \textit{Scrapy} wurde mit \textit{Playwright} über die Erweiterung \textit{Scrapy-Playwright} verknüpft. Die Nutzung von \textit{Scrapy-Playwright} erforderte unter einem Windows-Betriebssystem eine Linux-Virtualisierungsumgebung. Dafür wurde \textit{Windows Subsystem For Linux 2} verwendet. Da bei der Anwendung von \textit{Playwright} in Einzelfällen viele Fehlermeldungen auftraten, wurden vorgelagerte Seiten, auf denen die Sitzungstermine aufgelistet und verlinkt waren, manuell mit einem Webbrowser lokal als HTML-Datei gespeichert. Weiterhin wurden die Antwortzeiten der Server beachtet und Verzögerungsmechanismen eingepflegt. Ohne Verzögerungsmechanismen wurden nicht alle Dokumente heruntergeladen und es ergaben sich Lücken in der Datenbank. Die Datensätze wurden kontinuierlich auf Plausibilität und Vollständigkeit geprüft. Wenn Fehler vorlagen, wurden diese identifiziert und die entsprechenden \textit{Web-Scraping-Skripte} angepasst. Die Datensätze für das jeweilige RIS wurden als \textit{CSV}-Datei gespeichert. Die \textit{Python-Skripte} für \textit{Web Scraping} der RIS sind in dem angehängten \textit{GitHub}-Repositorium zu finden (s. \autoref{appendix_Github}).
+
+Die Datensätze für die einzelnen Kommunen wurden akquiriert. Dabei waren die Datensätze noch nicht vollständig und normalisiert. Zudem enthielten die Textdaten noch Unreinheiten. Im nächsten Schritt wurden die Daten zu einer gemeinsamen Datenbank zusammengefügt und die Dateneinträge aufbereitet.
+
+\nocite{gemeindehassloch, kreisbaddurkheim, kreisbergstrassea, kreisfreiestadtfrankenthal, kreisfreiestadtlandau, kreisfreiestadtspeyer, kreisgermersheim, kreisheilbronn, rhein-neckar-kreis, rhein-pfalz-kreis, saarpfalz-kreis, stadtbaddurkheim, stadtbadfriedrichshall, stadtbadrappenau, stadtbensheim, stadtheppenheim, stadthockenheim, stadthomburg, stadtlampertheim, stadtleimen, stadtprimasens, stadtschifferstadt, stadtschwetzingen, stadtviernheim, stadtweinheim, stadtwiesloch, stadtworthamrhein}
+
+\subsection{Datenaufbereitung}\label{sec:datenaufbereitung}
+
+Nach Akquise der Datensätze durch das \textit{Web Scraping} wurden die Daten im nächsten Schritt aufbereitet und unvollständige Dateneinträge weitgehend komplettiert. Für die Datenaufbereitung wurde wie beim \textit{Web Scraping} \textit{Python 3.10} genutzt. Folgende \textit{Python}-Bibliotheken fanden Verwendung:
+
+\begin{itemize}
+    \item \href{https://pandas.pydata.org/}{Pandas},
+    \item \href{https://github.com/pymupdf/PyMuPDF}{PyMuPDF} und
+    \item \href{https://github.com/madmaze/pytesseract}{pytesseract}.
+\end{itemize}
+
+\textit{Pandas} ist, ähnlich wie \textit{Excel}, eine \textit{Python}-Bibliothek, die zur Datenanalyse und Datenmanipulation genutzt wurde. Die CSV-Dateien mit den Daten der jeweiligen Kommune wurden mit \textit{Pandas} zu einem gemeinsamen Datensatz als \textit{Pandas DataFrame} verknüpft. Der überwiegende Teil der Textdaten war in den heruntergeladenen PDF-Dokumenten gespeichert. Für das \textit{Text Mining} (s. \autoref{sec:methodik_nlp}) wurden die textbasierten Inhalte aus den PDF-Dokumenten extrahiert und in der Datenbank abgespeichert. Stellenweise, wie bei den Kommunen Bad Friedrichshall, Schifferstadt, dem Rhein-Pfalz-Kreis, wurden die Textinhalte der Dokumente beim \textit{Web Scraping} gespeichert. Bei maschinell erstellten Dokumenten wurde der Text mittels der \textit{Python}-Bibliothek \textit{PyMuPDF} als String aus den PDF-Dokumenten extrahiert. \textit{PyMuPDF} wurde auf Basis von Benchmarktests ausgewählt \parencite{thoma2023}. Rund 12~\%, der Dokumente waren nicht maschinenlesbar, da es sich um Scans handelte. Um Text aus diesen Dateien zu extrahieren, wurde bei diesen Dateien \textit{Optical Character Recognition (OCR)} angewandt. \textit{OCR} wird dazu verwendet, Text innerhalb von Bildern zu erkennen. In dieser Arbeit wurden hierfür \textit{Tesseract} \parencite{smith2007} und die kompatible \textit{Python}-Bibliothek \textit{pytesseract} ausgewählt.
+
+Neben dem Extrahieren von textbasierten Inhalten wurden anschließend die Dokumententypen bestimmt. Die Dokumententypen dienten dazu, die Dokumente oberflächlich in ihrer Funktion zu unterscheiden. Insgesamt wurde zwischen neun Dokumententypen unterschieden, welche auf Grundlage des theoretischen Hintergrunds (s. \autoref{ch_kommunalpolitik}) und Sichtung der RIS im vorherigen Kapitel differenziert wurden. Bei der Stadt Viernheim wurden die Klassen (engl. \textit{class}) des HTML-Quellcodes dafür genutzt, die Dokumentenklassen zu identifizieren. Bei anderen Kommunen hingegen wurde die Typisierung ausschließlich über den Dokumentennamen durchgeführt. Dafür wurden Regex verwendet. Die Typisierung wurde abschließend manuell geprüft, da bei der Typisierung durch Regex und der heterogenen Benennung der Dokumente keine eindeutige Zuordnung möglich war. Der Ausdruck \textit{Vorlage} wurde bspw. in nicht eindeutigen Kontexten verwendet. Innerhalb des Strings \textit{Beschluss zur Vorlage} war der Begriff \textit{Vorlage} bspw. nicht eindeutig zuordenbar. Die Dokumententypen und die dazugehörigen Regex sind in \autoref{tab:dokumententypen_regex} gelistet.
+
+\input{Tables/Dokumententypen_Regex.tex}
+
+Darüber hinaus stand das Beratungsergebnis zu Beschlüssen bei den Kommunen Hockenheim, Homburg, Lampertheim, Landau, Viernheim, Kreis Germersheim, Kreis Heilbronn, Rhein-Neckar-Kreis im RIS zur Verfügung. Bei den restlichen Kommunen wurden explizit im RIS keine Angaben zum Beratungsergebnis veröffentlicht. Diese waren indirekt in den Textdokumenten enthalten. Indes waren die Angaben nicht einheitlich und umfassten zumeist Abstimmungsergebnisse, sodass es notwendig war, die Daten zu normalisieren. Die Beratungsergebnisse zu Beschlüssen wurden nach manueller Datensichtung in acht Status klassifiziert:
+\begin{multicols}{2}
+    \begin{itemize}
+        \item beschlossen
+        \item abgelehnt
+        \item abgesetzt
+        \item zurückgezogen
+        \item vertagt
+        \item offen
+        \item Teilbeschlüsse
+        \item zur Kenntnis genommen
+    \end{itemize}
+\end{multicols}
+
+Bei fehlenden Angaben zum Beschlussstatus wurde der Versuch unternommen, auf Basis der Kategorisierung des Dokumententyps, der Dokumenteninhalte und Regex den Beschlussstatus aus Dokumenten des Typs \textit{Beschluss} zu extrahieren. Jedoch erwies sich dies als schwierig, da sich die Struktur der Dokumente von Kommune zu Kommune unterschied. Die Ergebnisse hätten manuell für jedes Dokument betrachtet werden müssen, sodass der Arbeitsaufwand für die unvollständigen Datensätze zu groß war und nicht im Rahmen dieser Arbeit realisiert werden konnte.
+
+Überdies wurden kleine textliche Bearbeitungen des Korpus vorgenommen. Darunter fiel die Entfernung von Silbentrennungen als auch für die Verarbeitung störenden \textit{Whitespace Character}, wie z.~B. Leerzeichen und Absätze. Dateneinträge ohne textlichen Inhalt wurden aus dem Datensatz entfernt. Durch diese Maßnahmen wurden unnatürlich unterbrochene Wörter vermieden, die Anzahl von Token reduziert und der Datensatz auf auswertbare Einträge minimiert. Zudem wurde der Datensatz auf Daten bis zum 31. Dezember 2022 gefiltert, da dieses das letzte vollständige Kalenderjahr war. Der endgültige Datensatz umfasste 68.663~Dokumenteneinträge und wurde im nächsten Schritt analysiert. Die Analyse erfolgte durch verschiedene Ansätze des \textit{NLP}. Diese Ansätze werden im folgenden Kapitel erläutert.
+
+% ---------------------------------------------------------------------
+% ---------------------------------------------------------------------
+
+\section{Natural Language Processing}\label{sec:methodik_nlp}
+
+Die aufbereiteten Daten wurden anschließend mit \textit{NLP}-Techniken in einem dreistufigen Prozess bearbeitet und betrachtet. Aus dem gesamten Korpus wurden zunächst relevante Dokumente identifiziert. Dies half, sich einen Überblick über die Daten zu verschaffen und einschätzen zu können, ob und wie viele qualitative Daten zum Thema Verkehr und Mobilität vorhanden sind.
+
+Im zweiten Schritt wurden die Dokumente aufgrund der Kontextlängen der \textit{LLM} kleinteiliger auf Abschnittsebene betrachtet. Teilweise wurden in einem Dokument mehrere Themen behandelt. Die Unterteilung eines Dokumentes in Abschnitte diente dazu, das Thema Verkehr und Mobilität isoliert von anderen politischen Themen betrachten zu können. Ziel war es, die in der Politik behandelten verkehrlichen Schwerpunkte zu identifizieren.
+
+Die Analyseergebnisse wurden hinsichtlich verkehrlicher Schwerpunktthemen für alle Kommunen im Gesamten und für eine Selektion von Kommunen ausgewertet. Diese Vorgehensweise für die Selektion von Fallbeispielen wird im nächsten Abschnitt erläutert. Ferner wurden die verkehrlichen Schwerpunkte nach den Dokumententypen und vorhandenen Beratungsergebnissen überprüft. Die Auswertungen wurden als Frequenzanalyse bzw. Zeitreihenanalyse und Häufigkeitsverteilung dargestellt. Ferner wurden diese der verschiedenen \textit{NLP}-Techniken visuell verglichen.
+
+Im dritten Schritt wurden aus den im zweiten Schritt identifizierten Abschnitten konkrete Informationen gewonnen. Mithilfe einer \textit{Question-Answering-Systematik (QA)} wurden inhaltlich zu einer Frage passende Textabschnitte erkannt, an ein LLM übergeben und abschließend wurde eine Antwort in natürlicher Sprache generiert. Im Rahmen dieser Technik wurden explorative Fragen zu verschiedenen verkehrlichen Themen gestellt und die Ergebnisse qualitativ ausgewertet. Diese Technik wurde ausschließlich für eine Selektion von Kommunen erprobt (s. \autoref{sec:selektion_kommunen}).
+
+Für rechenintensive Vorgänge wurde der Cloud-Computing-Service \textit{Google Colab Pro+} verwendet. Dieser bietet die Möglichkeit den RAM auf bis zu 51 GB zu erweitern, sowie die Nutzung von ausgewählten Grafikkarten, welche die Rechenzeit von Transformer-basierten \textit{NLP}-Techniken erheblich reduzierte.
+
+% ---------------------------------------------------------------------
+
+\subsection{Selektierung von Kommunen}\label{sec:selektion_kommunen}
+
+\textit{NLP}-Techniken, wie das \textit{LDA-Topic-Modeling} und das \textit{QA}, auf die nachfolgend noch konkreter eingegangen wird, konnten aufgrund von begrenzten Hardwareressourcen ausschließlich auf einem verkleinerten Korpus angewandt werden. Beim \textit{QA} kommt der personelle Aufwand hinzu, die generierten Antworten qualitativ auszuwerten.
+
+Die Selektion der Kommunen wurde durch eine Kombination von \textit{Most-Similar} und \textit{Diverse Case} Strategien erstellt. Die \textit{Most-Similar Case} Methode zielt darauf ab, in einer Variable oder mehreren Variablen ähnliche Fälle abzudecken \parencite[25]{gerring2009}. 
+
+Diese Methode wurde hinsichtlich der Datenverfügbarkeit der jeweiligen Kommunen angewandt. Hierfür waren
+\begin{itemize}
+    \item eine möglichst große Anzahl von Dokumenten sowie
+    \item eine möglichst lange Zeitreihe von Relevanz.
+\end{itemize}
+So konnte sichergestellt werden, dass eine gewisse Datenquantität zugrunde liegt. Die dazugehörigen Daten für diese Kriterien sind in \autoref{appendix_ergebnisdaten} einzusehen.
+
+Der \textit{Diverse Case} versucht eine maximale Varianz entlang relevanter Dimensionen abzudecken \parencite[vgl.][8]{gerring2009}. Diese Methode stellte sicher, dass Kommunen mit unterschiedlichen regional strukturellen Aspekten ausgewählt wurden. Dabei wurden
+\begin{itemize}
+    \item eine kreisfreie und eine kreisangehörige Stadt sowie ein Landkreis
+    \item aus drei Bundesländern ausgewählt.
+\end{itemize}
+
+Hierfür diente \autoref{tab:kommunen_übersicht} als Referenz. Die Auswahl der Kommunen umfasste die Städte Frankenthal, Schwetzingen, Lampertheim und den Landkreis Bergstraße. Nachdem die Fallbeispiele ausgewählt wurden, kamen verschiedene \textit{NLP}-Techniken für die Fallbeispiele oder des gesamten Datensatzes zum Einsatz. Bei der Anwendung dieser wurde zunächst mit einfachen Techniken begonnen und die Komplexität der Techniken gesteigert.
+
+
+% ---------------------------------------------------------------------
+
+\subsection{Pattern Matching}\label{sec:pattern_matching}
+
+Eine einfach umzusetzende Variante, verkehrliche Themen in Dokumenten zu identifizieren, war das \textit{Pattern Matching}. Die Technik ermöglichte das Erkennen, welche Dokumente von verkehrlicher Relevanz waren und folgend, um welches verkehrliches Thema es sich handelte. Dies wurde mit Regex umgesetzt. Das Themenfeld Verkehr wurde in Kategorien unterteilt, sodass mögliche Schwerpunktfelder identifiziert werden konnten. Es wurde zwischen den verkehrlichen Kategorien allgemeine Verkehrsbegriffe, MIV, Parken, E-Mobilität, Fahrrad, Gehen, öffentlicher Verkehr (ÖV) und neue Mobilität unterschieden. Für diese verschiedenen Kategorien wurden aus Glossaren mit dem Schwerpunkt Verkehr eine Liste für die Themenfelder repräsentativer Regex zusammengestellt. Die Regex-Liste wurde anhand von Zufallsstichproben auf Eindeutigkeit geprüft, um \textit{WSD} vorzubeugen. Die verwendeten Regex sind in \autoref{tab:pattern_matching_regex} gelistet.
+
+\input{Tables/Pattern_Matching_Regex.tex}
+
+Ergebnisse des \textit{Pattern Matchings} wurden hinsichtlich verkehrlicher Schwerpunktthemen für alle Kommunen im Gesamten als auch dezidiert für die vier Fallbeispiele ausgewertet. Dabei wurden die verkehrlichen Schwerpunkte hinsichtlich der Dokumententypen und Beratungsergebnisse überprüft. Die Auswertungen wurden als Zeitreihenanalyse und Häufigkeitsverteilung dargestellt. 
+
+Des Weiteren wurden die Häufigkeiten des Regex-Vorkommens in Boolean, d.~h. \textit{True} oder \textit{False}, umgewandelt. Dadurch wurde einer Balancierung von überproportionalen Regex-Häufigkeiten vorgebeugt. Die verkehrlichen Schwerpunkte als Boolean wurden erneut nach dem oben beschriebenen Schema ausgewertet. Abschließend wurden beide Methodiken verglichen.
+
+Das \textit{Pattern Matching} entsprach dem simplen Zählen von gewissen Charakterabfolgen. Im nächsten Schritt wurde zunächst eine klassische computerlinguistische \textit{NLP}-Technik, das \textit{Topic Modeling}, angewandt.
+
+% ---------------------------------------------------------------------
+\subsection{Topic Modeling}\label{sec:topic_modeling}
+
+Neben dem \textit{Pattern Matching} stellte das \textit{Topic Modeling} ebenfalls die Möglichkeit dar, Themen innerhalb eines Korpus zu identifizieren. Es existieren drei grundlegende Ansätze für das \textit{Topic Modeling}: statistische Modelle wie \textit{LDA}, Modelle der linearen Algebra wie die \textit{Non-Negative Matrix Factorization (NMF)} sowie \textit{Embedding}-basierte Modelle wie \textit{BERTopic} und \textit{Top2Vec} \textcite[2]{egger2022}. Um die Funktions- und Leistungsfähigkeit des \textit{Topic-Modeling}-Ansatzes hinsichtlich einer themenspezifischen Auswertung zu überprüfen, wurden zwei der oben beschriebenen \textit{Topic-Modeling}-Ansätze angewandt. Einer der beiden Ansätze sollte ein \textit{Embedding}-basierter Ansatz sein. \textcite[13]{egger2022} haben eine Übersicht mit Vor- und Nachteilen von vier \textit{Topic-Modeling-Frameworks} ausgearbeitet. \textit{LDA} und \textit{NMF} wiesen in der Übersicht ähnliche Vor- und Nachteile auf, sodass aufgrund seiner hohen Beliebtheit in dieser Arbeit \textit{LDA} erprobt wurde \parencite[2]{egger2022}. Selbiges gilt für die \textit{Embedding}-basierten Modelle \textit{BERTopic} und \textit{Top2Vec}. In diesem Fall wurde \textit{Top2Vec} erprobt, da das \textit{Framework} mit großen Datensätzen arbeiten konnte und nativ Suchfunktionen für Themen und Dokumente umfasste \parencite[13]{egger2022}.
+
+Das \textit{LDA-Topic-Modeling} wurde ausschließlich auf einen Datensatz angewandt, welcher die Fallbeispiele umfasste, da die zur Verfügung stehenden 51~GB RAM nicht für die Modellierung des gesamten Korpus genügten. Vor der Modellierung wurde der Datensatz einer Vorverarbeitung unterzogen. Das Korpus wurde \textit{tokenisiert}, Füllwörter wurden entfernt (engl. \textit{Stopword Removal}), \textit{Bi-} und \textit{Tri-Grams} gebildet und eine \textit{Lemmatization} angewandt. Zudem wurden Algorithmen auf Basis von \textit{BoW} und \textit{TF-IDF} durchgeführt. Die Modellierung erfolgte mit der \textit{Python}-Bibliothek \textit{Gensim}. Diese verfügt über ein handhabbares \textit{LDA-Framework}. Bei der Anzahl an Thementöpfen wurde nach dem Prinzip \textit{Trial-and-Error} verfahren. Es wurden jeweils 500 und 800 Thementöpfe vorgegeben. Die Anzahl der Thementöpfe orientierte sich an der Anzahl der Themen aus dem \textit{Embedding}-Ansatz mit \textit{Top2Vec}, welcher folgend erläutert wird. Das Modell hatte \textit{820} Themen identifiziert. Nach der Modellierung wurden die Modelle mit der Bibliothek \textit{pyLDAvis} visualisiert. Auf Basis dieser Visualisierungen wurde manuell nach \textit{Thementöpfen} mit explizitem verkehrlichen Bezug gesucht. Eine Rückkopplung der Thementöpfe zu den Dokumenten war nicht durch die \textit{Gensim-API} möglich, sodass primär analysiert wurde, ob und wie viele Thementöpfe einen verkehrlichen Bezug hatten.
+
+Mit \textit{Top2Vec} wurde das gesamte Korpus modelliert. Im Gegensatz zu \textit{LDA} war keine Datenvorverarbeitung notwendig. Nach der Modellierung wurden die Thementöpfe nach Begriffen und Regex aus \autoref{tab:pattern_matching_regex} durchsucht und den jeweiligen verkehrlichen Themenkategorien zugeordnet. Abschließend wurden die Dokumente der jeweiligen Thementöpfe identifiziert und die Kategorisierung in die Datenbank übertragen. Die Auswertung erfolgte analog zu den Ergebnissen des \textit{Pattern Matchings}. Es wurden Frequenzanalysen der verkehrlichen Schwerpunktthemen für alle Kommunen im Gesamten, d.~h. für die vier Fallbeispiele, aufgezeigt. Dabei wurden die verkehrlichen Schwerpunkte hinsichtlich der Dokumententypen und Beratungsergebnisse überprüft. Die Auswertungen wurden als Zeitreihenanalyse und Häufigkeitsverteilung dargestellt.
+
+Das \textit{Topic Modeling} wies Limitationen in Anbetracht der Detailschärfe auf. Das \textit{LDA} lag zwar ein \textit{Soft Clustering}-Ansatz zugrunde, dennoch können die Thementöpfe nicht auf die Dokumente zurückverfolgt werden. \textit{Top2Vec} verfolgte hingegen einen \textit{Hard Clustering}-Ansatz, wo die Dokumente eindeutig einem Thementopf zugeordnet wurden. Die Lücke zwischen beiden Ansätzen wurde mit \textit{ZSC} geschlossen. Diese wurde im nächsten Schritt abgehandelt.
+
+% ---------------------------------------------------------------------
+
+\subsection{Zero-Shot-Classification}
+
+Als weitere \textit{NLP}-Technik wurde die \textit{ZSC} angewandt. Diese Technik stellte einen reinen \textit{Embedding}-basierten Ansatz dar. Die \textit{ZSC} ermöglichte die Klassifikation der Dokumente bzw. von Dokumentenabschnitten mithilfe von \textit{Pre-Trained-Models}. Für die \textit{ZSC} wurde das \textit{Pipeline-Framework} von \textit{Hugging Face} genutzt \parencite{huggingfaceb}. Neben der \textit{Pipeline} stellt die \textit{Hugging Face Community} ebenfalls \textit{State-of-the-Art} Sprachmodelle zur Verfügung. Die spezifische Leistungsfähigkeit von multilingualen Sprachmodellen konnte nicht anhand von Benchmarktests nachvollzogen werden. Auf einen Vergleich verschiedener Sprachmodelle wurde verzichtet. Es wurde lediglich ein Sprachmodell mit dem Fokus auf \textit{ZSC} ausgewählt. Dies sollte zum Zeitpunkt der Ausarbeitung aktiv weiterentwickelt und verhältnismäßig häufig von Nutzenden heruntergeladen werden. Die Wahl fiel auf das Sprachmodell \textit{MoritzLaurer/mDeBERTa-v3-base-xnli-multilingual-nli-2mil7} \parencite{laurer2022,laurer2023}.
+
+Da das Modell über eine Kontextlänge von 512~Token verfügte, wurden die Dokumente mithilfe der \textit{Langchain-API} rekursiv in Abschnitte von 1000~Zeichen und einer Überlappung von 200~Zeichen unterteilt \parencite{langchain}. Um die Vergleichbarkeit zu den methodischen Ansätzen wie dem \textit{Pattern Matching} und \textit{Topic Modeling} zu gewährleisten, orientierten sich die gewählten Label der \textit{ZSC} an \autoref{tab:pattern_matching_regex}. Explizit wurden folgende Label mit der \textit{ZSC} geprüft:
+
+\begin{multicols}{3}
+    \begin{itemize}
+        \item Verkehr
+        \item Elektromobilität
+        \item Automobil
+        \item Parken
+        \item Fahrrad
+        \item öffentlicher Verkehr
+        \item Bus
+        \item Bahn
+        \item zu Fuß gehen
+        \item Carsharing
+        \item Bikesharing
+        \item E-Scooter
+    \end{itemize}
+\end{multicols}
+
+Die Ergebnisse der \textit{ZSC} mit der \textit{Hugging Face Pipeline} lieferten eine Dezimalzahl zwischen 0 und 1. Dabei gilt: Je größer der Wert, desto höher ist die Wahrscheinlichkeit, dass das Label zum Textabschnitt passt \parencite{huggingfacec}. Zudem wurde das Attribut \textit{multilabel} auf \textit{True} gesetzt, da für jedes Label eine Wahrscheinlichkeit berechnet werden sollte. Dies ermöglicht eine Mehrfachklassifizierung eines Textabschnitts. Somit entsprach der dargelegte Ansatz einem \textit{Soft Clustering}. Ansonsten würde die Wahrscheinlichkeit auf alle Label aufgeteilt werden, was einem \textit{Hard Clustering} entspräche. Des Weiteren wurde ein Schwellenwert festgelegt, der definierte, ob ein Label für den Textabschnitt zutreffend war. In dieser Arbeit wurde ein Schwellenwert von 0,6 definiert. Der Wert begründete sich darin, dass die Wahrscheinlichkeit eines Labels mindestens im oberen Drittel liegen sollte, um tatsächlich von Relevanz zu sein. Anschließend wurden die Ergebnisse der \textit{ZSC} auf Dokumentenebene aggregiert. In \autoref{tab:zsc_agg_systematik} ist die Aggregationssystematik dargestellt. Um die Vergleichbarkeit der Ergebnisse zu gewährleisten, wurden zudem die Kategorien \textit{Bus}, \textit{Bahn} und \textit{öffentlicher Verkehr} zu \textit{ÖV} sowie die Kategorien \textit{Carsharing}, \textit{Bikesharing} und \textit{E-Scooter} zu \textit{Neue Mobilität} nach \autoref{tab:zsc_agg_systematik} aggregiert. Die Auswertung erfolgte analog zum \textit{Pattern Matching} und \textit{Top2Vec-Topic-Modeling} (s. \autoref{sec:pattern_matching} und \ref{sec:topic_modeling}).
+
+\input{Tables/ZSC_Agg_Systematik.tex}
+
+Die \textit{ZSC} wurde mit einem kleinen Sprachmodell mit 279 Millionen Parametern durchgeführt \parencite{laurer2023}. Zudem beschränkte sich die Klassifizierung auf vorgegebene Label. Diese Nachteile sollten mit einem \textit{LLM} überwunden werden. Folglich wurde das zum Zeitpunkt größte öffentlich zugängliche \textit{LLM} \textit{gpt-3.5-turbo} verwendet \parencite[10]{brown2020}. Dabei wurde kein Klassifizierungsansatz hinsichtlich der verkehrlichen Schwerpunktthemen, sondern komplexere Klassifizierungsansatze, wie das Bestimmen von Beratungsergebnissen oder dem Dokumententyp, erprobt.
+
+% ---------------------------------------------------------------------
+\subsection{Tagging Chain}
+
+Eine \textit{Tagging Chain} ermöglicht es nach einem definierten Schema Dokumente zu klassifizieren sowie gezielt Attribute aus dem Text zu extrahieren. Diese Funktion kann mit dem \textit{LLM} {gpt-3.5-turbo-0613} von \textit{OpenAI} in dem \textit{Langchain-Framework} genutzt werden \parencite{langchainb}. Mit der \textit{Tagging Chain} wurden sechs Attribute durch das \textit{LLM} beschrieben. In der nachfolgenden Auflistung als auch in \autoref{tab:tagging_chain} werden diese genauer definiert.
+\begin{enumerate}
+    \item Verkehr: Beinhaltet die Textpassage ein verkehrliches Thema?
+    \item Dokumententyp: Welcher Dokumententyp nach den in \autoref{sec:datenaufbereitung} definierten Klassen liegt vor?
+    \item Beratungsergebnis: Welches Beratungsergebnis nach den in \autoref{sec:datenaufbereitung} definierten Klassen liegt vor?
+    \item Fraktion: Welche politische Fraktion oder Organisation hat diesen Text eingebracht oder geschrieben?
+    \\
+    \item Verkehrliches Thema: Beinhaltet der Text Themen aus einer definierten Liste mit verkehrlichen Begriffen?
+    \item Keywords: Welche Keywords beschreiben allgemein den Inhalt des Textes?
+\end{enumerate}
+
+\input{Tables/Tagging_chain.tex}
+
+\begin{minipage}{\linewidth}
+Für diese \textit{Chain} wurde folgendes \textit{Prompt Template} angewandt:
+\begin{lstlisting}
+'''
+Extract the desired information from the following passage. The text is written in German and you are an expert on transportation. Answer in German.
+
+Passage:
+{input}
+'''
+\end{lstlisting}
+\end{minipage}
+
+Die Güte der Qualität wurde anhand einer repräsentativen Stichprobe beurteilt und mit den Ergebnissen des \textit{Pattern Matchings}, der \textit{ZSC}, der Datenaufbereitung und des \textit{Top2Vec-Topic-Modelings} verglichen. Explizit wurden drei Attribute miteinander verglichen und auf Korrektheit überprüft. Es wurde überprüft, ob die Methodiken ein verkehrliches Thema identifizieren konnten. Dafür wurden die Ergebnisse der Methodiken durch die in \autoref{tab:zsc_agg_systematik} dargelegte Systematik in einem Boolean aggregiert. Des Weiteren wurde der im \textit{Web Scraping} und der Datenaufbereitung klassifizierte Dokumententyp mit den Ergebnissen der \textit{Tagging Chain} verglichen. Ferner wurde das von der \textit{Tagging Chain} extrahierte Beratungsergebnis auf Korrektheit geprüft. Wenn das Dokument ein Beratungsergebnis auf Grundlage des \textit{Web Scrapings} in der Datenbank hinterlegt hatte, wurde dies zur Prüfung herangezogen. Die Ergebnisse für die Angaben zu spezifischen Themen und Fraktionen bzw. Institutionen, welche das Dokument geschrieben oder eingebracht hatten, als auch die Ergebnisse des \textit{Top2Vec-Topic-Modelings} wurden manuell auf Korrektheit überprüft. Bei allen Vergleichen oder Überprüfungen wurden die Ergebnisse in den Kategorien richtig positiv oder negativ, richtig mit einer nicht vorgegebenen Antwort, falsch positiv oder negativ oder fehlerhaft unterschieden. Die Trefferquoten wurden tabellarisch und grafisch aufbereitet.
+
+Die Stichprobe wurde ausschließlich aus Dokumenten mit einer Länge von maximal 3.500~Token und einem vorhandenen Wert des Attributs \textit{Dokumententyp} gebildet. Die Begrenzung der Token war aufgrund der begrenzten Kontextlänge des \textit{LLM} von 4.096~Token erforderlich \parencite{openai}. Bei dem Attribut \textit{Dokumententyp} wurde sichergestellt, dass alle Dokumente einen Vergleichswert in der Datenbank hinterlegt hatten. Da das Korpus überproportional viele Anhänge beinhaltete, wurde eine Gewichtung der Kategorien vorgenommen. Anhänge wurden hinsichtlich ihres textlichen Inhalts als weniger wichtig eingeschätzt als Beschlüsse, Anfragen, Anträge oder Niederschriften. Die Gewichtung von Anhängen wurde gesenkt und die von Bekanntmachungen, Niederschriften, Anfragen, Anträgen und Beschlüssen wurde gemäß \autoref{tab:gewichtung_stichprobe} erhöht. Die Werte basierten auf einem \textit{Trial-and-Error}-Prinzip auf Grundlage der relativen Häufigkeitsverteilung der Dokumententypen innerhalb der gewichteten Zufallsstichprobe. Das Korpus umfasste eine Grundgesamtheit von 68.663~Dokumenten, sodass bei einem Konfidenzniveau von 95~\% und einer Fehlerspanne von 5~\% die Stichprobe einen Umfang von 383 Dokumenten beinhalten muss \parencite{walterscheid2022}.
+
+\input{Tables/Gewichtung_Stichprobe.tex}
+
+Die Anwendung von \textit{LLM} geht über das Klassifizieren mittels \textit{Tagging Chain} hinaus. Nutzende können \textit{LLM} auch Fragen in natürlicher Sprache stellen. Das \textit{LLM} generiert anschließend auf Grundlage eines Datensatzes als Wissensspeicher eine Antwort in natürlicher Sprache. Das bildete die letzte angewandte Technik dieser Arbeit und wird im nächsten Kapitel dargelegt.
+
+% ---------------------------------------------------------------------
+
+\subsection{Question Answering}
+
+Die letzte Technik, die in dieser Arbeit angewandt wurde, ist das \textit{QA}. Das \textit{QA} wurde mit der \textit{Langchain}-Bibliothek realisiert. Es wurde in drei Schritten vorgegangen. 
+\begin{enumerate}
+    \item Rekursives Teilen der Dokumente in Abschnitte mit 1.000~Zeichen und einer Überlappung von 200~Zeichen
+    \item Erstellen von \textit{Embeddings} der Dokumentenabschnitte und Speicherung dieser in einer Vektordatenbank 
+    \item Erstellen einer \textit{Question Answering Chain} mit einem \textit{Retriever} und \textit{LLM}
+\end{enumerate}
+
+Die Teilung der Dokumente in kleine Abschnitte verkürzt den Kontext und optimiert das Kontextverständnis der Sprachmodelle. Überdies ist die maximale Kontextlänge von Sprachmodellen zu beachten. Kurze Textabschnitte ermöglichen das Erstellen von \textit{Embeddings} mit einer Vielfalt von Sprachmodellen, da zum Zeitpunkt der Ausarbeitung nur wenige Modelle über eine große maximale Kontextlänge verfügen.
+
+Im zweiten Schritt wurde ein Sprachmodell für die Erstellung der \textit{Embeddings} ausgewählt. Für die Auswahl wurden die sog. \textit{Massive Text Embedding Benchmarks (MTEB)} herangezogen \parencite{muennighoff2023}. \textit{MTEB} messen die Qualität von \textit{Embedding-Modellen}. Das \textit{Embedding}-Modell sollte multilingual trainiert worden und möglichst hoch auf dem \textit{MTEB-Leaderboard} der \textit{Hugging Face Community} gelistet sein \parencite{huggingfacea}. Die Wahl fiel auf das \textit{intfloat/multilingual-e5-base}. Es ist multilingual und erreichte die besten Benchmarkergebnisse der multilingualen \textit{Embedding}-Modelle \parencite{intfloat,wang2022}. Es handelt sich um ein relativ kleines Sprachmodell, was an dem Stichwort \textit{base} im Namen erkennbar ist. Das \textit{Embedding}-Modell \textit{text-embedding-ada-002} von \textit{OpenAI} hätte eine valide Alternative zu dem \textit{multilingual-e5-base} dargestellt, da es auf einer ähnlichen Architektur basiert wie das leistungsstarke Chatmodell \textit{gpt-3.5-turbo} von \textit{OpenAI}. Es wurde nicht getestet, da bei der Erstellung der \textit{Embeddings} ein sog. \textit{ValueError} aufkam und der Fehler nicht ausfindig gemacht werden konnte. Allgemein ist empfehlenswert Open Source \textit{Embedding}-Modelle zu nutzen, da die Entwicklung der Modelle hochdynamisch ist, \textit{Embeddings} unabhängig von proprietären Anbietern erstellt und ohne Lizenzkosten mit einem aktuelleren Modell erneut in \textit{Embeddings} überführt werden können.\footnote{Am 30.06.2023 wurde bspw. ein größeres multilinguales Modell veröffentlicht, welches die \textit{MTEB} des Modells \textit{multilingual-e5-base} übertrifft \parencite{intfloata}.} Bei der Erstellung der \textit{Embeddings} war darauf zu achten, dass in den Metadaten der Dokumente ausschließlich Strings, Reals oder Integers genutzt werden. \textit{Null}-Werte oder \textit{Datetime}-Typen wurden nicht akzeptiert. Die \textit{Embeddings} wurden in der Vektordatenbank \textit{Chroma} gespeichert.
+
+Abschließend wurde eine sog. \textit{Chain} mithilfe von \textit{Langchain} erstellt \parencite{langchaina}. Diese kombinierte \textit{LLM} und \textit{Retriever}. Der \textit{Retriever} ist als das im vorherigen Schritt genutzte \textit{Embedding-Modell} zu verstehen, welches mittels eines \textit{Similarity Searches} im Vektorraum der Nutzereingabe nah befindliche Dokumentenabschnitte identifiziert. Insgesamt wurden die 45 besten Ergebnisse der Suche ausgegeben. Diese wurden in ein \textit{Prompt Template} eingefügt und an das \textit{LLM} weitergeleitet. In diesem Fall wurde das \textit{LLM} \textit{gpt-3.5-turbo-16k-0613} von OpenAI genutzt. Das Modell zählte zum Zeitpunkt der Ausarbeitung zu den leistungsstärksten Sprachmodellen überhaupt. Zudem hat \textit{LLM} eine große Kontextlänge von 16.384 Token \parencite{openai}, sodass viele Ergebnisse des \textit{Similarity Search} genutzt werden konnten. Bei der Antwortgenerierung wurden die Dokumentenquellen, aus welchen das \textit{LLM} seine Informationen bezog, mit ausgegeben.
+
+Das \textit{QA} wurde primär anhand eines Fallbeispiels angewandt. Die Stadt Lampertheim hatte als einzige Kommune der Fallbeispiele Beratungsergebnisse aus dem \textit{Web Scraping} in der Datenbank hinterlegt. Dennoch wurden die \textit{Embeddings} für alle Fallbeispiele erstellt. Dies war in dem explorativen Vorgehen begründet. Grundlegend wurde folgendes \textit{Prompt Template} genutzt: 
+\begingroup
+\nopagebreak
+\begin{lstlisting}
+'''
+You are an expert for transportation and mobility research. Don't make up an answer and always answer truthfully. You speak and answer in German.
+----------------
+{context}
+'''
+\end{lstlisting}
+\endgroup
+
+Dem Modell wurden explorativ Fragen zu Themengebieten \textit{Fördermittel und Verkehr}, \textit{Radverkehr}, \textit{Klimaschutz und Verkehr} sowie der \textit{Anwendung von verkehrlichen Konzepten und Plänen} gestellt. Abhängig von den generierten Antworten des \textit{LLM} wurden Fragen umformuliert. Das sog. \textit{Prompt-Engineering} -- das Schreiben von Eingabesequenzen für \textit{LLM} -- kann Auswirkungen auf die Antwortqualität haben \parencite[2]{yao2023}. Die Antworten wurden auf Basis des Antworttextes und der angegebenen Dokumentenquellen qualitativ verglichen und analysiert.
+
+% \parencite{he2023}\parencite{huggingfacea}
+
+
+% ---------------------------------------------------------------------
+% ---------------------------------------------------------------------
+
+\section{Zusammenfassung der Methodik}
+
+Das Untersuchungsgebiet dieser Arbeit umfasste insgesamt 20~Mittelstädte mit 20.000 bis 50.000~EW und sieben dazugehörige Landkreise innerhalb des VRN-Tarifgebiets. Von diesen Kommunen wurden alle Dokumente samt Metadaten des entsprechenden parlamentarischen Gremiums aus dem RIS gescrapt, aufbereitet und in einer Datenbank gespeichert. Andere politische Gremien wie Fachausschüsse wurden nicht berücksichtigt.
+
+Anhand dieser Dokumente wurde eine Bandbreite von Techniken des \textit{NLP} angewandt, um quantitative und qualitative Daten zur kommunalen Verkehrsplanung zu gewinnen. Zu diesen Ansätzen gehörten das \textit{Pattern Matching}, \textit{Topic Modeling}, \textit{ZSC}, \textit{Tagging Chain} als auch das \textit{QA}. Das \textit{Pattern Matching}, \textit{Topic Modeling}, die \textit{ZSC} und \textit{Tagging Chain} zielten darauf ab, die Dokumente zu klassifizieren. Wohingegen beim \textit{Pattern Matching} Regex zur Anwendung kamen, arbeiteten die anderen überwiegend auf Grundlagen von Transformer-basierten Modellen. Weiterhin ermöglichte die \textit{Tagging Chain} das gezielte Extrahieren von Informationen aus einer Textpassage. Mithilfe des \textit{QA} wurden Freitextfragen zu verschiedenen Themenbereichen der kommunalen Verkehrspolitik gestellt.
+
+Alle Ergebnisse sind explorativ hinsichtlich Häufigkeitsverteilungen und zeitlichen Veränderungen analysiert worden. Die Fallbeispielkommunen Frankenthal, Schwetzingen, Lampertheim und der Kreis Bergstraße standen besonders im Fokus der Analyse. Für eine repräsentative Stichprobe erfolgte die manuelle Überprüfung der Ergebnisse aller Klassifikationsansätze als auch der Ergebnisqualität. Die generierten Antworten des \textit{QA} wurden vergleichend beurteilt.
